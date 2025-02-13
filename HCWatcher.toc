@@ -1,0 +1,7 @@
+## Interface: 11506
+## Title: HCWatcher
+## Notes: Alerts when a player interacts with non-group members and logs infractions.
+## Author: YourName
+## Version: 1.1
+## SavedVariables: HCWatcherDB
+HCWatcher.lua
