@@ -187,7 +187,7 @@ HCWatcher:SetScript("OnEvent", function(self, event, ...)
     elseif event == "GROUP_ROSTER_UPDATE" then
         for i = 1, GetNumGroupMembers() do
             local name = GetRaidRosterInfo(i)
-            if name and not allowedPlayers[string.lower(name)] then
+            if name and not isInGuild(name) then
                 LogViolation(UnitName("player"), "Grouped with outsider " .. name)
                 LeaveParty()
             end
@@ -195,7 +195,7 @@ HCWatcher:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "PARTY_INVITE_REQUEST" then
         local inviter = ...
-        if inviter and not allowedPlayers[string.lower(inviter)] then
+        if inviter and not isInGuild(inviter) then
             LogViolation(UnitName("player"), "Accepted a party invite from " .. inviter)
             DeclineGroup()
             StaticPopup_Hide("PARTY_INVITE")
