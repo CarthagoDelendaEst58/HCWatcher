@@ -20,6 +20,8 @@ local allowedPlayers = {
     ["roachtfout"] = true
 }
 
+local allowedGuild = "Orgrimmar Bloods"
+
 -- Ensure HCWatcherDB is initialized
 local function EnsureDBInitialized()
     if not HCWatcherDB then
@@ -156,6 +158,14 @@ SlashCmdList["HCWATCHERCLEAR"] = function()
     print("|cffffcc00[HCWatcher] Infraction log cleared.|r")
 end
 
+local isInGuild = function(unit)
+    local gname, _, _ = GetGuildInfo(unit)
+    if gname == allowedGuild then
+        return true
+        end
+    return false
+end
+
 -- 🔄 Event Handler (Everything Works Now)
 HCWatcher:SetScript("OnEvent", function(self, event, ...)
     EnsureDBInitialized()
@@ -169,7 +179,7 @@ HCWatcher:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "TRADE_SHOW" or event == "TRADE_REQUEST" then
         local target = UnitName("NPC")
-        if target and not allowedPlayers[string.lower(target)] then
+        if target and not isInGuild(target) then
             LogViolation(UnitName("player"), "Attempted to trade with " .. target)
             CancelTrade()
         end
