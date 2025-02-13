@@ -159,10 +159,17 @@ SlashCmdList["HCWATCHERCLEAR"] = function()
 end
 
 local isInGuild = function(unit)
-    local gname, _, _ = GetGuildInfo(unit)
-    if gname == allowedGuild then
-        return true
+    unit = unit .. "-Doomhowl"
+    print(unit)
+    local num_guild_members = GetNumGuildMembers()
+    for i=1 , num_guild_members do
+        local name = GetGuildRosterInfo(i)
+        print(name)
+        print(name == unit)
+        if name == unit then
+            return true
         end
+    end
     return false
 end
 
@@ -179,7 +186,7 @@ HCWatcher:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "TRADE_SHOW" or event == "TRADE_REQUEST" then
         local target = UnitName("NPC")
-        if target and not isInGuild(target) then
+        if target and isInGuild(target) == false then
             LogViolation(UnitName("player"), "Attempted to trade with " .. target)
             CancelTrade()
         end
@@ -187,7 +194,7 @@ HCWatcher:SetScript("OnEvent", function(self, event, ...)
     elseif event == "GROUP_ROSTER_UPDATE" then
         for i = 1, GetNumGroupMembers() do
             local name = GetRaidRosterInfo(i)
-            if name and not isInGuild(name) then
+            if name and isInGuild(name) == false then
                 LogViolation(UnitName("player"), "Grouped with outsider " .. name)
                 LeaveParty()
             end
@@ -195,7 +202,7 @@ HCWatcher:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "PARTY_INVITE_REQUEST" then
         local inviter = ...
-        if inviter and not isInGuild(inviter) then
+        if inviter and isInGuild(inviter) == false then
             LogViolation(UnitName("player"), "Accepted a party invite from " .. inviter)
             DeclineGroup()
             StaticPopup_Hide("PARTY_INVITE")
